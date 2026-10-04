@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>StreakForge 🔥 | Developer Momentum & Habit Tracker</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body class="theme-dark">
+  <div class="app-container">
+    <!-- Top Header -->
+    <header class="header">
+      <div class="brand">
+        <div class="brand-icon">🔥</div>
+        <div>
+          <h1 class="brand-title">StreakForge</h1>
+          <p class="brand-subtitle">Never break the chain.</p>
+        </div>
+      </div>
+      <div class="header-actions">
+        <div class="current-date-badge" id="currentDateBadge">Today</div>
+        <button id="quickLogBtn" class="btn btn-primary glow-button">
+          <span>⚡ Log Today's Win</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Stat Highlights -->
+    <section class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-header">
+          <span class="stat-label">Current Streak</span>
+          <span class="stat-icon">🔥</span>
+        </div>
+        <div class="stat-value" id="currentStreak">1 <span class="stat-unit">days</span></div>
+        <div class="stat-caption" id="streakStatusText">Streak alive today!</div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-header">
+          <span class="stat-label">Longest Streak</span>
+          <span class="stat-icon">🏆</span>
+        </div>
+        <div class="stat-value" id="longestStreak">1 <span class="stat-unit">days</span></div>
+        <div class="stat-caption">All-time record</div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-header">
+          <span class="stat-label">Today's Focus Time</span>
+          <span class="stat-icon">⏱️</span>
+        </div>
+        <div class="stat-value" id="focusTimeToday">0 <span class="stat-unit">mins</span></div>
+        <div class="stat-caption" id="focusSessionsCount">0 sessions completed</div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-header">
+          <span class="stat-label">Daily Goals Done</span>
+          <span class="stat-icon">🎯</span>
+        </div>
+        <div class="stat-value" id="goalsRatio">0/3</div>
+        <div class="stat-caption" id="goalsPercent">0% finished</div>
+      </div>
+    </section>
+
+    <!-- Activity Heatmap Section -->
+    <section class="panel">
+      <div class="panel-header">
+        <div>
+          <h2 class="panel-title">Contribution Grid</h2>
+          <p class="panel-description">Your developer consistency across the last 12 weeks</p>
+        </div>
+        <div class="heatmap-legend">
+          <span>Less</span>
+          <span class="legend-box level-0"></span>
+          <span class="legend-box level-1"></span>
+          <span class="legend-box level-2"></span>
+          <span class="legend-box level-3"></span>
+          <span class="legend-box level-4"></span>
+          <span>More</span>
+        </div>
+      </div>
+      <div class="heatmap-wrapper" id="heatmapWrapper">
+        <div class="heatmap-grid" id="heatmapGrid"></div>
+      </div>
+    </section>
+
+    <!-- Interactive Grid (Focus Timer + Daily Tasks) -->
+    <div class="split-grid">
+      <!-- Focus Pomodoro Panel -->
+      <section class="panel timer-panel">
+        <div class="panel-header">
+          <div>
+            <h2 class="panel-title">Focus Engine</h2>
+            <p class="panel-description">Deep work sprints with audio cues</p>
+          </div>
+          <div class="mode-toggles">
+            <button class="mode-btn active" data-mode="work" data-time="25">Focus (25m)</button>
+            <button class="mode-btn" data-mode="shortBreak" data-time="5">Short (5m)</button>
+            <button class="mode-btn" data-mode="longBreak" data-time="15">Long (15m)</button>
+          </div>
+        </div>
+
+        <div class="timer-display-container">
+          <div class="timer-circle-progress">
+            <svg viewBox="0 0 100 100" class="progress-ring">
+              <circle class="ring-bg" cx="50" cy="50" r="45"></circle>
+              <circle class="ring-stroke" id="ringStroke" cx="50" cy="50" r="45"></circle>
+            </svg>
+            <div class="timer-digits" id="timerDigits">25:00</div>
+          </div>
+          <div class="timer-state-label" id="timerStateLabel">READY TO SPRINT</div>
+        </div>
+
+        <div class="timer-controls">
+          <button id="startTimerBtn" class="btn btn-primary btn-large">Start</button>
+          <button id="pauseTimerBtn" class="btn btn-secondary btn-large" disabled>Pause</button>
+          <button id="resetTimerBtn" class="btn btn-outline btn-large">Reset</button>
+        </div>
+      </section>
+
+      <!-- Daily Checklist Panel -->
+      <section class="panel tasks-panel">
+        <div class="panel-header">
+          <div>
+            <h2 class="panel-title">Today's Objectives</h2>
+            <p class="panel-description">Small daily wins make unstoppable momentum</p>
+          </div>
+          <div class="progress-pill" id="taskProgressBar">
+            <div class="progress-fill" id="taskProgressFill" style="width: 0%"></div>
+          </div>
+        </div>
+
+        <form id="addTaskForm" class="add-task-form">
+          <input 
+            type="text" 
+            id="taskInput" 
+            placeholder="e.g. Commit to GitHub, ship feature, review PR..." 
+            autocomplete="off" 
+            required 
+            class="input-field"
+          />
+          <button type="submit" class="btn btn-secondary">Add</button>
+        </form>
+
+        <ul class="task-list" id="taskList">
+          <!-- Dynamic tasks rendered here -->
+        </ul>
+      </section>
+    </div>
+
+    <!-- Storage & Utility Footer -->
+    <footer class="footer">
+      <div class="footer-left">
+        <span>StreakForge v1.0 • Built for Hunain Ahmed</span>
+      </div>
+      <div class="footer-actions">
+        <button id="exportDataBtn" class="btn btn-outline btn-sm">💾 Export Backup</button>
+        <button id="importDataBtn" class="btn btn-outline btn-sm">📂 Import Data</button>
+        <input type="file" id="importFileInput" accept=".json" style="display: none;">
+      </div>
+    </footer>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
