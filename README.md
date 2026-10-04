@@ -24,7 +24,7 @@
 Simply clone the repository and open `index.html` in your favorite browser:
 
 ```bash
-git clone https://github.com/HunainAhmed/streak-forge.git
+git clone https://github.com/HunainxAhmed/streak-forge.git
 cd streak-forge
 # Open index.html directly or serve with python:
 python -m http.server 3000
