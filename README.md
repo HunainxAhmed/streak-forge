@@ -12,7 +12,10 @@
 
 - 📅 **Interactive Streak Heatmap**: Real-time visual activity grid mirroring GitHub-style contributions.
 - ⏱️ **Integrated Focus Timer**: Built-in Pomodoro timer with customizable intervals and procedural sound alerts (Web Audio API).
-- 🎯 **Daily Objective Tracker**: Quick-add daily goals, tasks, and habit milestones.
+- 🎨 **Multi-Theme Engine**: Instant switching between Matrix Emerald, Cyberpunk Cyan, Synthwave Violet, and Solar Amber.
+- 💡 **Daily Spark Motivation**: Curated developer quotes engine with shuffle and one-click copy.
+- ⌨️ **Productivity Keyboard Shortcuts**: Control timer (`Space`), log wins (`L`), cycle themes (`T`), and reset (`R`) effortlessly.
+- 🎯 **Daily Objective Tracker**: Quick-add daily goals, tasks, and habit milestones with progress tracking.
 - 📊 **Streak Metrics & Insights**: Live tracking of current streak, longest streak, and total completed sessions.
 - 💾 **Local-First & Private**: Zero cloud dependency; all progress is safely persisted to `localStorage` with JSON export/backup capability.
 - ⚡ **Zero-Build & Ultra-Fast**: Pure vanilla web stack (HTML5 / CSS3 / Vanilla JS). No bundlers or heavy dependencies required.

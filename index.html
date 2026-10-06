@@ -21,12 +21,39 @@
         </div>
       </div>
       <div class="header-actions">
+        <div class="theme-selector" id="themeSelector">
+          <button class="theme-dot active" data-theme="emerald" title="Matrix Emerald" style="background:#10b981;"></button>
+          <button class="theme-dot" data-theme="cyberpunk" title="Cyberpunk Cyan" style="background:#06b6d4;"></button>
+          <button class="theme-dot" data-theme="synthwave" title="Synthwave Purple" style="background:#a855f7;"></button>
+          <button class="theme-dot" data-theme="solar" title="Solar Amber" style="background:#f59e0b;"></button>
+        </div>
+        <button id="soundToggleBtn" class="btn btn-outline btn-sm" title="Toggle Sound Cues">
+          <span id="soundIcon">🔊</span>
+        </button>
         <div class="current-date-badge" id="currentDateBadge">Today</div>
         <button id="quickLogBtn" class="btn btn-primary glow-button">
           <span>⚡ Log Today's Win</span>
         </button>
       </div>
     </header>
+
+    <!-- Motivation Spark Banner -->
+    <section class="motivation-banner">
+      <div class="motivation-content">
+        <span class="spark-icon">✨</span>
+        <div class="quote-wrapper">
+          <blockquote id="quoteText" class="quote-text">"Small daily disciplines repeated consistently lead to monumental developer breakthroughs."</blockquote>
+          <span id="quoteAuthor" class="quote-author">— The Compound Effect</span>
+        </div>
+      </div>
+      <div class="motivation-actions">
+        <button id="shuffleQuoteBtn" class="btn btn-outline btn-sm" title="Generate another spark">🎲 New Spark</button>
+        <button id="copyQuoteBtn" class="btn btn-outline btn-sm" title="Copy quote to clipboard">📋</button>
+      </div>
+    </section>
+
+    <!-- Toast Notification Popup -->
+    <div id="toastNotification" class="toast-notification"></div>
 
     <!-- Stat Highlights -->
     <section class="stats-grid">
@@ -156,7 +183,8 @@
     <!-- Storage & Utility Footer -->
     <footer class="footer">
       <div class="footer-left">
-        <span>StreakForge v1.0 • Built for Hunain Ahmed</span>
+        <span>StreakForge v1.1 • Built for Hunain Ahmed</span>
+        <span class="shortcuts-hint"><kbd>Space</kbd> Timer • <kbd>L</kbd> Log Win • <kbd>T</kbd> Theme</span>
       </div>
       <div class="footer-actions">
         <button id="exportDataBtn" class="btn btn-outline btn-sm">💾 Export Backup</button>

@@ -17,10 +17,16 @@
       { id: '3', text: 'Read / Learn documentation or new tech', completed: false }
     ],
     focusMinutesToday: 0,
-    focusSessionsCount: 0
+    focusSessionsCount: 0,
+    theme: 'emerald',
+    soundEnabled: true
   };
 
   let state = loadState();
+
+  // Ensure state has defaults if upgrading from earlier version
+  if (!state.theme) state.theme = 'emerald';
+  if (state.soundEnabled === undefined) state.soundEnabled = true;
 
   // Ensure today's win is pre-recorded so the user has an immediate streak win!
   const todayKey = getLocalDateKey(new Date());
@@ -47,6 +53,15 @@
   const goalsPercentEl = document.getElementById('goalsPercent');
   const heatmapGrid = document.getElementById('heatmapGrid');
   const quickLogBtn = document.getElementById('quickLogBtn');
+
+  const themeDots = document.querySelectorAll('.theme-dot');
+  const soundToggleBtn = document.getElementById('soundToggleBtn');
+  const soundIcon = document.getElementById('soundIcon');
+  const quoteText = document.getElementById('quoteText');
+  const quoteAuthor = document.getElementById('quoteAuthor');
+  const shuffleQuoteBtn = document.getElementById('shuffleQuoteBtn');
+  const copyQuoteBtn = document.getElementById('copyQuoteBtn');
+  const toastNotification = document.getElementById('toastNotification');
 
   const timerDigits = document.getElementById('timerDigits');
   const timerStateLabel = document.getElementById('timerStateLabel');
@@ -93,6 +108,7 @@
 
   // Web Audio Synth Chime
   function playAlertChime() {
+    if (!state.soundEnabled) return;
     try {
       const ctx = new (window.AudioContext || window.webkitAudioContext)();
       const osc = ctx.createOscillator();
@@ -113,6 +129,51 @@
     } catch (err) {
       // AudioContext could be blocked by browser policy until interaction
     }
+  }
+
+  // Toast Notification
+  let toastTimer = null;
+  function showToast(message) {
+    if (!toastNotification) return;
+    toastNotification.textContent = message;
+    toastNotification.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => {
+      toastNotification.classList.remove('show');
+    }, 2200);
+  }
+
+  // Curated Quotes
+  const quotes = [
+    { text: "Small daily disciplines repeated consistently lead to monumental breakthroughs.", author: "The Compound Effect" },
+    { text: "First make it work, then make it right, then make it fast.", author: "Kent Beck" },
+    { text: "The secret of getting ahead is getting started.", author: "Mark Twain" },
+    { text: "Consistency is what transforms average into excellence.", author: "Developer Maxim" },
+    { text: "Simplicity is prerequisite for reliability.", author: "Edsger W. Dijkstra" },
+    { text: "Action is the foundational key to all success.", author: "Pablo Picasso" },
+    { text: "Commit early, commit often, never break the chain.", author: "Streak Philosophy" }
+  ];
+
+  let currentQuoteIndex = 0;
+
+  function renderQuote(index) {
+    if (!quoteText || !quoteAuthor) return;
+    currentQuoteIndex = (index + quotes.length) % quotes.length;
+    const q = quotes[currentQuoteIndex];
+    quoteText.textContent = `"${q.text}"`;
+    quoteAuthor.textContent = `— ${q.author}`;
+  }
+
+  function applyTheme(themeName) {
+    const validThemes = ['emerald', 'cyberpunk', 'synthwave', 'solar'];
+    if (!validThemes.includes(themeName)) themeName = 'emerald';
+    state.theme = themeName;
+    saveState();
+
+    document.body.className = `theme-${themeName}`;
+    themeDots.forEach((dot) => {
+      dot.classList.toggle('active', dot.dataset.theme === themeName);
+    });
   }
 
   // --- Streak Calculations ---
@@ -381,11 +442,67 @@
     playAlertChime();
     renderStats();
     renderHeatmap();
+    showToast('🔥 Streak win logged! Consistency level increased.');
 
     quickLogBtn.style.transform = 'scale(0.96)';
     setTimeout(() => {
       quickLogBtn.style.transform = '';
     }, 150);
+  });
+
+  themeDots.forEach((dot) => {
+    dot.addEventListener('click', () => {
+      applyTheme(dot.dataset.theme);
+      showToast(`🎨 Theme changed to ${dot.dataset.theme}`);
+    });
+  });
+
+  if (soundToggleBtn) {
+    soundToggleBtn.addEventListener('click', () => {
+      state.soundEnabled = !state.soundEnabled;
+      saveState();
+      soundIcon.textContent = state.soundEnabled ? '🔊' : '🔇';
+      showToast(state.soundEnabled ? 'Audio notifications enabled 🔊' : 'Audio notifications muted 🔇');
+    });
+  }
+
+  if (shuffleQuoteBtn) {
+    shuffleQuoteBtn.addEventListener('click', () => {
+      renderQuote(currentQuoteIndex + 1);
+      showToast('✨ New spark loaded!');
+    });
+  }
+
+  if (copyQuoteBtn) {
+    copyQuoteBtn.addEventListener('click', () => {
+      const q = quotes[currentQuoteIndex];
+      navigator.clipboard.writeText(`"${q.text}" ${q.author}`).then(() => {
+        showToast('📋 Quote copied to clipboard!');
+      }).catch(() => {
+        showToast('📋 Copied!');
+      });
+    });
+  }
+
+  // Keyboard Shortcuts
+  window.addEventListener('keydown', (e) => {
+    if (['INPUT', 'TEXTAREA'].includes(document.activeElement.tagName)) return;
+
+    if (e.code === 'Space') {
+      e.preventDefault();
+      if (isRunning) pauseTimer();
+      else startTimer();
+    } else if (e.key === 'l' || e.key === 'L') {
+      quickLogBtn.click();
+    } else if (e.key === 't' || e.key === 'T') {
+      const themes = ['emerald', 'cyberpunk', 'synthwave', 'solar'];
+      const currentIndex = themes.indexOf(state.theme || 'emerald');
+      const nextTheme = themes[(currentIndex + 1) % themes.length];
+      applyTheme(nextTheme);
+      showToast(`🎨 Theme: ${nextTheme}`);
+    } else if (e.key === 'r' || e.key === 'R') {
+      resetTimer();
+    }
   });
 
   modeButtons.forEach((btn) => {
@@ -414,6 +531,7 @@
     saveState();
     renderTasks();
     renderStats();
+    showToast('🎯 New daily objective added!');
   });
 
   // Export / Import
@@ -425,6 +543,7 @@
     document.body.appendChild(downloadAnchor);
     downloadAnchor.click();
     downloadAnchor.remove();
+    showToast('💾 Backup exported successfully');
   });
 
   importDataBtn.addEventListener('click', () => {
@@ -442,13 +561,15 @@
         if (imported && typeof imported === 'object') {
           state = Object.assign({}, defaultState, imported);
           saveState();
+          applyTheme(state.theme || 'emerald');
+          soundIcon.textContent = state.soundEnabled ? '🔊' : '🔇';
           renderStats();
           renderHeatmap();
           renderTasks();
-          alert('StreakForge data imported successfully!');
+          showToast('📂 Backup restored successfully!');
         }
       } catch (err) {
-        alert('Invalid JSON file format.');
+        showToast('⚠️ Invalid JSON file format.');
       }
     };
     reader.readAsText(file);
@@ -456,6 +577,9 @@
 
   // --- Initialize ---
   function init() {
+    applyTheme(state.theme || 'emerald');
+    if (soundIcon) soundIcon.textContent = state.soundEnabled ? '🔊' : '🔇';
+    renderQuote(Math.floor(Math.random() * quotes.length));
     renderHeaderDate();
     renderStats();
     renderHeatmap();
